@@ -23,6 +23,9 @@ wheels/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
+**/final
+**/test
+**/model_storage 
 *.egg
 MANIFEST
 
@@ -35,6 +38,7 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+**/todolist.txt
 
 # Unit test / coverage reports
 htmlcov/
