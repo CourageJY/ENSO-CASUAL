@@ -15,12 +15,12 @@ class Autoencoder(Model):
     super(Autoencoder, self).__init__()
     self.latent_dim = latent_dim   
     self.encoder = tf.keras.Sequential([
-      layers.Flatten(),# (batch_size, 32, 44) => (batch_size, 32*44)
-      layers.Dense(latent_dim, activation='relu'),# (batch_size, 32*44) => (batch_size, 64)
+      layers.Flatten(),# (batch_size, 40, 55) => (batch_size, 40*55)
+      layers.Dense(latent_dim, activation='relu'),# (batch_size, 40*55) => (batch_size, 64)
     ])
     self.decoder = tf.keras.Sequential([
-      layers.Dense(32*44, activation='sigmoid'),# (batch_size, 64) => (batch_size, 32, 44)
-      layers.Reshape((32, 44))# (batch_size, 32*44) => (batch_size, 32, 44)
+      layers.Dense(40*55, activation='sigmoid'),# (batch_size, 64) => (batch_size, 40, 55)
+      layers.Reshape((40, 55))# (batch_size, 40*55) => (batch_size, 40, 55)
     ])
 
   def call(self, x):

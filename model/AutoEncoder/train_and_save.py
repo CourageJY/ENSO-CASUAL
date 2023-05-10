@@ -7,12 +7,12 @@ from model.AutoEncoder.auto_encoder import *
 from model.params import *
 
 #从npz文件中加载numpy数据
-sst = np.load(f"{params.remote_sensing_npz_dir}/sst-no-nan-final.npz")['sst']
-uwind = np.load(f"{params.remote_sensing_npz_dir}/uwind-no-nan-final.npz")['uwind']
-vwind = np.load(f"{params.remote_sensing_npz_dir}/vwind-no-nan-final.npz")['vwind']
-vapor = np.load(f"{params.remote_sensing_npz_dir}/vapor-no-nan-final.npz")['vapor']
-cloud = np.load(f"{params.remote_sensing_npz_dir}/cloud-no-nan-final.npz")['cloud']
-rain = np.load(f"{params.remote_sensing_npz_dir}/rain-no-nan-final.npz")['rain']
+sst = np.load(f"{params.final_data_dir}/sst-final.npz")['sst']
+uwind = np.load(f"{params.final_data_dir}/uwind-final.npz")['uwind']
+vwind = np.load(f"{params.final_data_dir}/vwind-final.npz")['vwind']
+vapor = np.load(f"{params.final_data_dir}/vapor-final.npz")['vapor']
+cloud = np.load(f"{params.final_data_dir}/cloud-final.npz")['cloud']
+rain = np.load(f"{params.final_data_dir}/rain-final.npz")['rain']
 
 #get train and test data
 sst_train,sst_test=train_test_split(sst, test_size=params.train_eval_split, random_state=params.random_seed)
@@ -42,7 +42,10 @@ for i in range(len(train)):
     
     #save the encoded data 
     encode_data=autoencoder.encoder(orgin[i]).numpy()
-    np.savez(f'{params.encoder_save_dir}/{params.remote_sensing_variables[i]}-encoder.npz', **{params.remote_sensing_variables[i]: orgin[i]})
+    np.savez(f'{params.encoder_save_dir}/{params.remote_sensing_variables[i]}-encoder.npz', **{params.remote_sensing_variables[i]: encode_data})
+
+    # Save the weights
+    autoencoder.save_weights(f'{params.encoder_save_dir}/{params.remote_sensing_variables[i]}-model')
 
 
 print("end")
