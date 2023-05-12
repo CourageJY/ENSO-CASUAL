@@ -20,10 +20,14 @@ plot_heatmap(sst[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
 model=Autoencoder(params.latent_dim)
 model.load_weights(f'{params.encoder_save_dir}/sst-model')
 
-# sst_encoder=np.load(f'{params.encoder_save_dir}/sst-encoder.npz')['sst']
-# print(sst_encoder[0].reshape(64).shape)
-# res=model.decoder(sst_encoder[0].reshape(64))
-res=model(sst)
+sst_encoder=np.load(f'{params.encoder_save_dir}/sst-encoder.npz')['sst']
+#print(sst_encoder[0].reshape(64).shape)
+t = tf.convert_to_tensor(sst_encoder, tf.float32)
+
+print(tf.reshape(t[0],[1,64]).shape)
+print(t.shape)
+res=model.decoder((tf.reshape(t[0],[1,64])))
+#res=model.encoder(sst)
 
 #figure2
 plot_heatmap(res[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
