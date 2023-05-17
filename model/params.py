@@ -22,8 +22,8 @@ flags.DEFINE_string("encoder_save_dir", "./model/AutoEncoder/model_storage", "Pa
 flags.DEFINE_float("train_eval_split", 0.1, "Percentage amount of testing data to use for eval.")
 flags.DEFINE_integer("random_seed", 10, "Seed to use for random number generation and shuffling.")
 flags.DEFINE_integer("latent_dim", 64, "Number of the latent features.")
-flags.DEFINE_integer("num_epochs", 20, "Number of epochs to train for.")
-flags.DEFINE_integer("batch_size", 4, "The batch size for training.")
+flags.DEFINE_integer("num_epochs", 45, "Number of epochs to train for.")
+flags.DEFINE_integer("batch_size", 16, "The batch size for training.")
 flags.DEFINE_integer("sequence_length", 6, "Sequence lenghth for predicting.")
 
 params = flags.FLAGS

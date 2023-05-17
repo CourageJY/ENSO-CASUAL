@@ -13,8 +13,8 @@ sys.path.append("")
 from model.params import *
 import time
 
-
-sst_e=np.load(f'{params.encoder_save_dir}/sst-encoder.npz')['sst']
+data_type='remote'
+sst_e=np.load(f'{params.encoder_save_dir}/{data_type}/sst-encoder.npz')['sst']
 
 names,nums=[],[]
 for j in range(sst_e.shape[1]):
@@ -41,7 +41,7 @@ cg.draw_pydot_graph()
 
 # save the graph
 pyd = GraphUtils.to_pydot(cg.G)
-pyd.write_png('./model/CasualDiscovery/graph_storage/sst_internal.png')
+pyd.write_png(f'./model/CasualDiscovery/graph_storage/{data_type}/sst_internal.png')
 
 # save the graph as npz
 graph=cg.G.graph
@@ -57,7 +57,7 @@ for i in range(len(nums)):
     sst_interal[str(names[i])]=pa[i]
 print(sst_interal)
 
-np.savez('./model/CasualDiscovery/graph_storage/sst-internal.npz',**sst_interal)
+np.savez(f'./model/CasualDiscovery/graph_storage/{data_type}/sst-internal.npz',**sst_interal)
 
 print("end")
 

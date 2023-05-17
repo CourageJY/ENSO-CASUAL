@@ -7,12 +7,13 @@ from model.AutoEncoder.auto_encoder import *
 from model.params import *
 
 #从npz文件中加载numpy数据
-sst = np.load(f"{params.final_data_dir}/sst-final.npz")['sst']
-uwind = np.load(f"{params.final_data_dir}/uwind-final.npz")['uwind']
-vwind = np.load(f"{params.final_data_dir}/vwind-final.npz")['vwind']
-vapor = np.load(f"{params.final_data_dir}/vapor-final.npz")['vapor']
-cloud = np.load(f"{params.final_data_dir}/cloud-final.npz")['cloud']
-rain = np.load(f"{params.final_data_dir}/rain-final.npz")['rain']
+data_type='reanalysis'
+sst = np.load(f"{params.final_data_dir}/{data_type}/sst-final.npz")['sst']
+uwind = np.load(f"{params.final_data_dir}/{data_type}/uwind-final.npz")['uwind']
+vwind = np.load(f"{params.final_data_dir}/{data_type}/vwind-final.npz")['vwind']
+vapor = np.load(f"{params.final_data_dir}/{data_type}/vapor-final.npz")['vapor']
+cloud = np.load(f"{params.final_data_dir}/{data_type}/cloud-final.npz")['cloud']
+rain = np.load(f"{params.final_data_dir}/{data_type}/rain-final.npz")['rain']
 
 #get train and test data
 sst_train,sst_test=train_test_split(sst, test_size=params.train_eval_split, random_state=params.random_seed)
@@ -32,7 +33,9 @@ for i in range(len(train)):
     print("---------Step{}----------".format(i+1))
     print("-------------------------")
     autoencoder=Autoencoder(params.latent_dim)
-    autoencoder.compile(optimizer='adam', loss=losses.MeanSquaredError())
+    autoencoder.compile(optimizer='adam',
+                         loss=losses.MeanSquaredError(),
+                         metrics=[tf.keras.metrics.MeanAbsoluteError()])
 
     autoencoder.fit(train[i], train[i],
                     epochs=params.num_epochs,
@@ -42,10 +45,10 @@ for i in range(len(train)):
     
     #save the encoded data 
     encode_data=autoencoder.encoder(orgin[i]).numpy()
-    np.savez(f'{params.encoder_save_dir}/{params.remote_sensing_variables[i]}-encoder.npz', **{params.remote_sensing_variables[i]: encode_data})
+    np.savez(f'{params.encoder_save_dir}/{data_type}/{params.remote_sensing_variables[i]}-encoder.npz', **{params.remote_sensing_variables[i]: encode_data})
 
     # Save the weights
-    autoencoder.save_weights(f'{params.encoder_save_dir}/{params.remote_sensing_variables[i]}-model')
+    autoencoder.save_weights(f'{params.encoder_save_dir}/{data_type}/{params.remote_sensing_variables[i]}-model')
 
 
 print("end")

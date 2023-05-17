@@ -23,29 +23,12 @@ def get_mean(data,j,k,h):
 def parse_npz_data():
     #-----REMSS------
     # (279,320,440)
-    sst1 = np.load(f"{params.remote_sensing_npz_dir}/sst-no-nan.npz")['sst']
-    uwind1 = np.load(f"{params.reanalysis_npz_dir}/uwind-resolve.npz")['uwind']
-    vwind1 = np.load(f"{params.reanalysis_npz_dir}/vwind-resolve.npz")['vwind']
-    vapor1 = np.load(f"{params.remote_sensing_npz_dir}/vapor-no-nan.npz")['vapor']
-    cloud1 = np.load(f"{params.remote_sensing_npz_dir}/cloud-no-nan.npz")['cloud']
-    rain1 = np.load(f"{params.remote_sensing_npz_dir}/rain-no-nan.npz")['rain']
-
-    #-----Reanlysis-----
-    # (1740,320,440)
-    sst2 = np.load(f"{params.reanalysis_npz_dir}/sst-resolve.npz")['sst']
-    uwind2 = np.load(f"{params.reanalysis_npz_dir}/uwind-resolve.npz")['uwind']
-    vwind2 = np.load(f"{params.reanalysis_npz_dir}/vwind-resolve.npz")['vwind']
-    vapor2 = np.load(f"{params.reanalysis_npz_dir}/rh-resolve.npz")['rh']
-    cloud2 = np.load(f"{params.reanalysis_npz_dir}/cwat-resolve.npz")['cwat']
-    rain2 = np.load(f"{params.reanalysis_npz_dir}/pwat-resolve.npz")['pwat']
-
-    #merge the above two datasets
-    sst=np.concatenate((sst1,sst2),axis=0)
-    uwind=np.concatenate((uwind1,uwind2),axis=0)
-    vwind=np.concatenate((vwind1,vwind2),axis=0)
-    vapor=np.concatenate((vapor1,vapor2),axis=0)
-    cloud=np.concatenate((cloud1,cloud2),axis=0)
-    rain=np.concatenate((rain1,rain2),axis=0)
+    sst = np.load(f"{params.remote_sensing_npz_dir}/sst-no-nan.npz")['sst']
+    uwind = np.load(f"{params.reanalysis_npz_dir}/uwind-resolve.npz")['uwind']
+    vwind = np.load(f"{params.reanalysis_npz_dir}/vwind-resolve.npz")['vwind']
+    vapor = np.load(f"{params.remote_sensing_npz_dir}/vapor-no-nan.npz")['vapor']
+    cloud = np.load(f"{params.remote_sensing_npz_dir}/cloud-no-nan.npz")['cloud']
+    rain = np.load(f"{params.remote_sensing_npz_dir}/rain-no-nan.npz")['rain']
 
     print(sst.shape)
 
@@ -53,9 +36,10 @@ def parse_npz_data():
     sst[abs(sst) < 8e-17] = 0
     vapor[abs(vapor) < 5e-16] = 0
 
-    # (123,320,440) =>(123,320/shrink_size,440/shrink_size) 通过取平均值来放缩数据，降低分辨率
+    # (279,320,440) =>(279,320/shrink_size,440/shrink_size) 通过取平均值来放缩数据，降低分辨率
     bar = PixelBar(r'Generating', max=sst.shape[0], suffix='%(percent)d%%')#进度条显示
     sst_, uwind_,vwind_,vapor_,cloud_,rain_=[],[],[],[],[],[]
+    shrink_size=8
     for i in range(sst.shape[0]):
         sst_.append([])
         uwind_.append([])
@@ -63,15 +47,15 @@ def parse_npz_data():
         vapor_.append([])
         cloud_.append([])
         rain_.append([])
-        for j in range(int(sst.shape[1]/params.shrink_size)):
+        for j in range(int(sst.shape[1]/shrink_size)):
             sst_[i].append([])
             uwind_[i].append([])
             vwind_[i].append([])
             vapor_[i].append([])
             cloud_[i].append([])
             rain_[i].append([])
-            for k in range(int(sst.shape[2]/params.shrink_size)):
-                h=params.shrink_size
+            for k in range(int(sst.shape[2]/shrink_size)):
+                h=shrink_size
                 sst_[i][j].append(sst[i:i+1,j*h:j*h+h,k*h:k*h+h].mean())
                 uwind_[i][j].append(uwind[i:i+1,j*h:j*h+h,k*h:k*h+h].mean())
                 vwind_[i][j].append(vwind[i:i+1,j*h:j*h+h,k*h:k*h+h].mean())
@@ -104,11 +88,11 @@ if __name__ == "__main__":
     print("Start!")
 
     sst,uwind,vwind,vapor,cloud,rain=parse_npz_data()
-    np.savez(f'./data/final/sst-final.npz', **{'sst': sst})
-    np.savez(f'./data/final/uwind-final.npz', **{'uwind': uwind})
-    np.savez(f'./data/final/vwind-final.npz', **{'vwind': vwind})
-    np.savez(f'./data/final/vapor-final.npz', **{'vapor': vapor})
-    np.savez(f'./data/final/cloud-final.npz', **{'cloud': cloud})
-    np.savez(f'./data/final/rain-final.npz', **{'rain': rain})
+    np.savez(f'./data/final/remote/sst-final.npz', **{'sst': sst})
+    np.savez(f'./data/final/remote/uwind-final.npz', **{'uwind': uwind})
+    np.savez(f'./data/final/remote/vwind-final.npz', **{'vwind': vwind})
+    np.savez(f'./data/final/remote/vapor-final.npz', **{'vapor': vapor})
+    np.savez(f'./data/final/remote/cloud-final.npz', **{'cloud': cloud})
+    np.savez(f'./data/final/remote/rain-final.npz', **{'rain': rain})
 
     print("Done!")

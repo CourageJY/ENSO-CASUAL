@@ -25,10 +25,9 @@ from model.params import *
 
 #load the encodered data
 data_e=[]
+data_type='reanalysis'
 for var in params.variables:
-    data_e.append(np.load(f'{params.encoder_save_dir}/{var}-encoder.npz')[var])
-
-
+    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
 
 # sst_e=np.load(f'{params.encoder_save_dir}/sst-encoder.npz')['sst']
 # uwind_e=np.load(f'{params.encoder_save_dir}/uwind-encoder.npz')['uwind']
@@ -120,7 +119,7 @@ for i in range(1,len(data_e)): # not include 0, 0 is sst
     bar.finish()
 
     #save
-    np.savez(f'./model/CasualDiscovery/graph_storage/{params.variables[i]}-sst-casual-pc.npz',**res)
+    np.savez(f'./model/CasualDiscovery/graph_storage/{data_type}/{params.variables[i]}-sst-casual-pc.npz',**res)
 
     #print(res)
 

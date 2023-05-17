@@ -9,6 +9,10 @@ from tensorflow.keras import layers, losses
 from tensorflow.keras.datasets import fashion_mnist
 from tensorflow.keras.models import Model
 
+import sys
+sys.path.append("")
+from model.params import *
+
 class LSTM_model(Model):
  def __init__(self):
     super(LSTM_model, self).__init__() 
@@ -20,4 +24,21 @@ class LSTM_model(Model):
     ])
 
  def call(self, x):
-    return self.lstm_model(x)
+    return self.lstm_model(x)#(batch,time,1)
+ 
+ def compile_and_fit(self, train_data,train_label,test_data,test_label, patience=8):#过拟合则提前终止
+   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
+                                                      patience=patience,
+                                                      mode='min')
+
+   self.compile(loss=tf.keras.losses.MeanSquaredError(),
+                  optimizer=tf.keras.optimizers.Adam(),
+                  metrics=[tf.keras.metrics.MeanAbsoluteError()])
+
+   history = self.fit(train_data,train_label, 
+                      epochs=params.num_epochs,
+                      validation_data=(test_data,test_label),
+                      batch_size=params.batch_size,
+                      shuffle=True,
+                      callbacks=[early_stopping])
+   return history
