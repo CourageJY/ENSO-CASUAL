@@ -28,7 +28,8 @@ for i in range(12):
 
 #load the predicted data
 #start=1345
-start=1602
+year=2004
+start=(year-1870)*12-6
 sequence_len=6
 predict_len=18
 #file_name='1345-predict-15-res.npz'
