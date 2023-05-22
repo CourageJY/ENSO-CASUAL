@@ -30,7 +30,7 @@ def get_encoder_model(data_type):
     encoder_models=[]
     for var in params.remote_sensing_variables:
         model=Autoencoder(params.latent_dim)
-        model.load_weights(f'{params.encoder_save_dir}/{data_type}/{var}-model')
+        model.load_weights(f'{params.encoder_save_dir}/{data_type}/{var}-model').expect_partial()
         encoder_models.append(model)
     return encoder_models
 
@@ -40,11 +40,17 @@ def get_num_from_name(list,name):
             return i
     return -1
 
-def get_lstm_model(data_type,casual_type,sst_nums):
+def get_lstm_model(data_type,casual_type,casual_algorithm,nums,var_num):
     lstm_models=[]
-    for num in sst_nums:
+    for num in nums:
         model=LSTM_model()
-        model.load_weights(f'./model/LSTM/model_storage/{data_type}/{casual_type}/sst-{num}-model')
+        model.load_weights(f'./model/LSTM/model_storage/{data_type}/{casual_type}-{casual_algorithm}/{params.variables[var_num]}-{num}-model').expect_partial()
         lstm_models.append(model)
     
     return lstm_models
+
+def get_month_weight(lens):
+    m_w=[]
+    for i in range(lens):
+        m_w.append((i%12+1)/10)
+    return np.array(m_w).reshape(lens,1)

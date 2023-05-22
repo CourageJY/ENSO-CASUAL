@@ -58,6 +58,10 @@ cover/
 **/graph_storage
 **/raw
 **/test
+**/test_datas
+**/data_storage
+**/data_storage1
+**/history
 
 # Translations
 *.mo

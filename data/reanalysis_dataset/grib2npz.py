@@ -18,7 +18,7 @@ final = params.reanalysis_npz_dir
 smonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 bmonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-def read_grib(path):
+def read_grib(path): 
 
     print(f'Parsing parameter {str.split(path, "/")[-1]}')
     bar = PixelBar(r'Parsing', max=len(os.listdir(path)), suffix='%(percent)d%%')
@@ -52,11 +52,11 @@ def read_grib(path):
     bar.finish()
 
     reanalysis = []
-    for i in range(1851, 1998):
+    for i in range(1851, 2015):
         reanalysis.append(year_record[i])
     reanalysis = np.array(reanalysis)
     data = {f'{str.split(path, "/")[-1]}': reanalysis}
-    np.savez(f'{final}/{str.split(path, "/")[-1]}.npz', **data)
+    np.savez(f'./data/reanalysis_dataset/meta_data/final/{str.split(path, "/")[-1]}.npz', **data)
 
 
 def main():

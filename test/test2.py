@@ -8,7 +8,7 @@
 
 # print(4)
 
-import tensorflow as tf
+# import tensorflow as tf
 
 # from typing_extensions import Required
 
@@ -27,15 +27,19 @@ import tensorflow as tf
 # print(tf.__version__)
 
 # print(tf.config.list_physical_devices('GPU'))
-import sys
-sys.path.append("")
-from model.AutoEncoder.auto_encoder import *
+# import sys
+# sys.path.append("")
+# from model.AutoEncoder.auto_encoder import *
 
-model=Autoencoder(64)
+# model=Autoencoder(64)
 
-model.save_weights('./test/my_checkpoint')
+# model.save_weights('./test/my_checkpoint')
 
-newmodel=Autoencoder(64)
-newmodel.save_weights('./test/my_checkpoint')
+# newmodel=Autoencoder(64)
+# newmodel.save_weights('./test/my_checkpoint')
 
-print("end")
+a=[1,2,3,4]
+
+print(a[-1])
+
+print(int(4/5))

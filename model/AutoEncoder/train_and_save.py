@@ -50,5 +50,4 @@ for i in range(len(train)):
     # Save the weights
     autoencoder.save_weights(f'{params.encoder_save_dir}/{data_type}/{params.remote_sensing_variables[i]}-model')
 
-
 print("end")

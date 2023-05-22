@@ -119,7 +119,7 @@ for i in range(1,len(data_e)): # not include 0, 0 is sst
     bar.finish()
 
     #save
-    np.savez(f'./model/CasualDiscovery/graph_storage/{data_type}/{params.variables[i]}-sst-casual-pc.npz',**res)
+    np.savez(f'./model/CasualDiscovery/graph_storage/{data_type}/pc-external/{params.variables[i]}-sst-casual-pc.npz',**res)
 
     #print(res)
 

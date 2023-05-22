@@ -13,13 +13,18 @@ import sys
 sys.path.append("")
 from model.params import *
 
+#采用三层lstm的结构
 class LSTM_model(Model):
  def __init__(self):
     super(LSTM_model, self).__init__() 
     self.lstm_model = tf.keras.models.Sequential([
-    # Shape [batch, time, features] => [batch, time, lstm_units]
+    # Shape [batch, time, features] => [batch, time, 32]
     tf.keras.layers.LSTM(32, return_sequences=True),
-    # Shape => [batch, time, features]
+    # Shape [batch, time, 32] => [batch, time, 24]
+    tf.keras.layers.LSTM(24, return_sequences=True),
+    # Shape [batch, time, 32] => [batch, time, 24]
+    tf.keras.layers.LSTM(16, return_sequences=True),
+    # Shape => [batch, time, 1]
     tf.keras.layers.Dense(units=1)
     ])
 

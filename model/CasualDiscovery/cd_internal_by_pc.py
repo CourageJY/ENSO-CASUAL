@@ -13,53 +13,76 @@ sys.path.append("")
 from model.params import *
 import time
 
-data_type='remote'
-sst_e=np.load(f'{params.encoder_save_dir}/{data_type}/sst-encoder.npz')['sst']
+#load the encodered data
+data_e=[]
+data_type='reanalysis'
+for var in params.variables:
+    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
 
-names,nums=[],[]
-for j in range(sst_e.shape[1]):
-    if(sst_e[0:,j:j+1].sum()>0):#not zero
-        names.append('sst'+str(j))
-        nums.append(j)
+#--------get the num of no_zero in data----------
+data_names,data_nums=[],[]
+for i in range(len(data_e)):
+    names,nums=[],[]
+    for j in range(data_e[i].shape[1]):
+        if(data_e[i][0:,j:j+1].sum()>0):#not zero
+            names.append(params.variables[i]+str(j))
+            nums.append(j)
+    data_names.append(names)
+    data_nums.append(nums)
 
-sst_u=sst_e[0:,nums[0]:nums[0]+1]
-for i in range(1,len(nums)):
-    sst_u=np.concatenate((sst_u,sst_e[0:,nums[i]:nums[i]+1]),axis=1)
 
-print(sst_u.shape)
+# data_type='reanalysis'
+# sst_e=np.load(f'{params.encoder_save_dir}/{data_type}/sst-encoder.npz')['sst']
 
-tic = time.time()
+# names,nums=[],[]
+# for j in range(sst_e.shape[1]):
+#     if(sst_e[0:,j:j+1].sum()>0):#not zero
+#         names.append('sst'+str(j))
+#         nums.append(j)
 
-cg = pc(sst_u, 0.05, fisherz,node_names=names)
+datas_u=[]
+for i in range(len(data_e)):
+    data_u=data_e[i][0:,data_nums[i][0]:data_nums[i][0]+1]
+    for j in range(1,len(data_nums[i])):
+        data_u=np.concatenate((data_u,data_e[i][0:,data_nums[i][j]:data_nums[i][j]+1]),axis=1)
+    datas_u.append(data_u)
+    print(data_u.shape)
 
-toc = time.time()
+for i in range(len(data_e)):
+    tic = time.time()
 
-print(f'Time taken: {toc-tic:.2f}s\n')
+    cg = pc(datas_u[i], 0.05, fisherz, node_names=data_names[i])
 
-# visualization using pydot
-cg.draw_pydot_graph()
+    toc = time.time()
 
-# save the graph
-pyd = GraphUtils.to_pydot(cg.G)
-pyd.write_png(f'./model/CasualDiscovery/graph_storage/{data_type}/sst_internal.png')
+    print(f'Time taken: {toc-tic:.2f}s\n')
 
-# save the graph as npz
-graph=cg.G.graph
-sst_interal={}
-pa=[]
-for i in range(len(nums)):
-    pa.append([])
-for i in range(len(nums)):
-    for j in range(len(graph[i])):  
-        if(graph[i][j]==-1):#1 or -1
-            pa[j].append(names[i])
-for i in range(len(nums)):
-    sst_interal[str(names[i])]=pa[i]
-print(sst_interal)
+    # visualization using pydot
+    cg.draw_pydot_graph()
 
-np.savez(f'./model/CasualDiscovery/graph_storage/{data_type}/sst-internal.npz',**sst_interal)
+    # save the graph
+    pyd = GraphUtils.to_pydot(cg.G)
+    pyd.write_png(f'./model/CasualDiscovery/graph_storage/{data_type}/{params.variables[i]}_internal.png')
+
+    # save the graph as npz
+    graph=cg.G.graph
+    data_interal={}
+    pa=[]
+    for j in range(len(data_nums[i])):
+        pa.append([])
+    for j in range(len(data_nums[i])):
+        for k in range(len(graph[i])):  
+            if(graph[j][k]==-1):#1 or -1
+                pa[k].append(data_nums[i][j])
+    for j in range(len(data_nums[i])):
+        data_interal[str(data_names[i][j])]=pa[j]
+    print(data_interal)
+
+    np.savez(f'./model/CasualDiscovery/graph_storage/{data_type}/{params.variables[i]}-internal.npz',**data_interal)
 
 print("end")
+
+
 
 
 

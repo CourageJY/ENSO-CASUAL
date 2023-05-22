@@ -51,21 +51,28 @@ if __name__=='__main__':
     # plot_heatmap(data,llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
     #               urcrnrlat=40,xgrid=11, ygrid=8,xbar_d=10,ybar_d=10,show=True)
     cmap=cmaps.GMT_panoply
-    sst=np.load(f"{params.remote_sensing_npz_dir}/sst-no-nan.npz")['sst']
-    sst_=np.load(f"{params.remote_sensing_npz_dir}/sst-no-nan-final.npz")['sst']
+    sst=np.load("./data/final/reanalysis/sst-final.npz")['sst']
+    #sst_=np.load(f"{params.remote_sensing_npz_dir}/sst-no-nan-final.npz")['sst']
 
     # #figure1
     plot_heatmap(sst[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
-                 urcrnrlat=40,xgrid=440, ygrid=320,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,34.5,34.4/100))
+                 urcrnrlat=40,xgrid=55, ygrid=40,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/100))
     
-    #figure2
-    plot_heatmap(sst_[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
-                 urcrnrlat=40,xgrid=55, ygrid=40,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/100)) 
+    plot_heatmap(sst[3],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
+                urcrnrlat=40,xgrid=55, ygrid=40,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/100))
+    
+    plot_heatmap(sst[6],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
+            urcrnrlat=40,xgrid=55, ygrid=40,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/100))
+    plot_heatmap(sst[9],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
+            urcrnrlat=40,xgrid=55, ygrid=40,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/100))
+    # #figure2
+    # plot_heatmap(sst_[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
+    #              urcrnrlat=40,xgrid=55, ygrid=40,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/100)) 
 
-    #figure3
-    sst=(sst-sst.min())/(sst.max()-sst.min())#数据归一化
+    # #figure3
+    # sst=(sst-sst.min())/(sst.max()-sst.min())#数据归一化
 
-    plot_heatmap(sst[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
-                 urcrnrlat=40,xgrid=440, ygrid=320,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/11))
+    # plot_heatmap(sst[0],llcrnrlon=160,urcrnrlon=270,llcrnrlat=-40,
+    #              urcrnrlat=40,xgrid=440, ygrid=320,xbar_d=10,ybar_d=10,show=True,cmap=cmap,level=np.arange(0,1.06,1.05/11))
 
     print("end")

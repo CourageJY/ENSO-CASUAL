@@ -10,18 +10,21 @@ from model.LSTM.lstm_model import *
 
 if __name__=='__main__':
     data_type='reanalysis'
-    casual_type='external'
-    sst_casual,sst_nums=get_sst_casual_data(data_type)
-    for i in range(len(sst_casual)):
-        print("---------------------------")
-        print("-------Step{}--------------".format(i+1))
-        print("---------------------------")
-        (train_data,train_label),(test_data,test_label)=split_series_data(sst_casual[i],params.sequence_length,0)
-        with tf.device('/CPU:0'):
-            lstm_model=LSTM_model()
-            lstm_model.compile_and_fit(train_data,train_label,test_data,test_label)
-
-            # Save the weights
-            lstm_model.save_weights(f'./model/LSTM/model_storage/{data_type}/{casual_type}/sst-{sst_nums[i]}-model')
+    casual_type='internal_and_external'
+    casual_algorithm='ganger'
+    for u in range(len(params.variables)):
+        var_casual,var_nums=get_var_casual_data(data_type,casual_type,casual_algorithm,u,month_weight=True)
+        for i in range(len(var_casual)):
+            print("---------------------------")
+            print("-------Step{}--------------".format(i+1))
+            print("---------------------------")
+            (train_data,train_label),(test_data,test_label)=split_series_data(var_casual[i],params.sequence_length,0)
+            with tf.device('/CPU:0'):
+                lstm_model=LSTM_model()
+                history=lstm_model.compile_and_fit(train_data,train_label,test_data,test_label)
+                #save history
+                np.savez(f'./model/LSTM/history/{params.variables[u]}-{i}-{params.sequence_length}.npz',**(history.history))
+                # Save the weights
+                lstm_model.save_weights(f'./model/LSTM/model_storage/{data_type}/{casual_type}-{casual_algorithm}/{params.variables[u]}-{var_nums[i]}-model')
 
     print("end")
