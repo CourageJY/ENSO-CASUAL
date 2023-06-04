@@ -6,14 +6,18 @@ sys.path.append("")
 from model.AutoEncoder.auto_encoder import *
 from model.LSTM.lstm_model import *
 from model.params import *
+from sklearn.preprocessing import MinMaxScaler
 
 def get_enocder_info(data_type):
     #load the encodered data
     data_e=[]
     for var in params.variables:
-        data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
+        data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-min-max-encoder.npz')[var])
+    data_e_unfit=[]
+    for var in params.variables:
+        data_e_unfit.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
     #--------get the num of no_zero in data----------
-    data_names,data_nums=[],[]
+    data_names,data_nums,scalers=[],[],[]
     for i in range(len(data_e)):
         names,nums=[],[]
         for j in range(data_e[i].shape[1]):
@@ -22,8 +26,12 @@ def get_enocder_info(data_type):
                 nums.append(j)
         data_names.append(names)
         data_nums.append(nums)
-    
-    return data_names,data_nums
+        #scaler
+        scaler=MinMaxScaler()
+        scaler.fit(data_e_unfit[i])
+        scalers.append(scaler)
+
+    return data_names,data_nums,scalers
 
 def get_encoder_model(data_type):
     #load model
@@ -52,5 +60,5 @@ def get_lstm_model(data_type,casual_type,casual_algorithm,nums,var_num):
 def get_month_weight(lens):
     m_w=[]
     for i in range(lens):
-        m_w.append((i%12+1)/10)
+        m_w.append((i%12)/12)
     return np.array(m_w).reshape(lens,1)

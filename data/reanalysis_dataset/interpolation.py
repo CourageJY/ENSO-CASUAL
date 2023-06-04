@@ -24,15 +24,64 @@ sst[sst == -1.0e+30] = 0
 
 print(pwat.shape, cwat.shape, rh.shape, uwind.shape, vwind.shape,sst.shape)
 
-data = {'pwat': np.array(pwat)}
+expand=2
+
+pwat_resolve = []
+for i in range(pwat.shape[0]):
+    data = pwat[i]
+    size = tuple((data.shape[1] * expand, data.shape[0] * expand))
+    data = np.array(Image.fromarray(data).resize(size, Image.BICUBIC))#扩张成320*440
+    pwat_resolve.append(data)
+
+cwat_resolve = []
+for i in range(cwat.shape[0]):
+    data = cwat[i]
+    size = tuple((data.shape[1] * expand, data.shape[0] * expand))
+    data = np.array(Image.fromarray(data).resize(size, Image.BICUBIC))
+    cwat_resolve.append(data)
+
+rh_resolve = []
+for i in range(rh.shape[0]):
+    data = rh[i]
+    size = tuple((data.shape[1] * expand, data.shape[0] * expand))
+    data = np.array(Image.fromarray(data).resize(size, Image.BICUBIC))
+    rh_resolve.append(data)
+
+uwind_resolve = []
+for i in range(uwind.shape[0]):
+    data = uwind[i]
+    size = tuple((data.shape[1] * expand, data.shape[0] * expand))
+    data = np.array(Image.fromarray(data).resize(size, Image.BICUBIC))
+    uwind_resolve.append(data)
+
+vwind_resolve = []
+for i in range(vwind.shape[0]):
+    data = vwind[i]
+    size = tuple((data.shape[1] * expand, data.shape[0] * expand))
+    data = np.array(Image.fromarray(data).resize(size, Image.BICUBIC))
+    vwind_resolve.append(data)
+
+#取nino34区域 35-45；30-80
+
+pwat_resolve=np.array(pwat_resolve)[:,35:45,30:80]
+cwat_resolve=np.array(cwat_resolve)[:,35:45,30:80]
+rh_resolve=np.array(rh_resolve)[:,35:45,30:80]
+uwind_resolve=np.array(uwind_resolve)[:,35:45,30:80]
+vwind_resolve=np.array(vwind_resolve)[:,35:45,30:80]
+sst=np.array(sst)[:,35:45,30:80]
+
+print(pwat_resolve.shape, cwat_resolve.shape, rh_resolve.shape, uwind_resolve.shape, vwind_resolve.shape,sst.shape)
+
+#save
+data = {'pwat': pwat_resolve}
 np.savez(f'{params.reanalysis_npz_dir}/pwat-resolve.npz', **data)
-data = {'cwat': np.array(cwat)}
+data = {'cwat': cwat_resolve}
 np.savez(f'{params.reanalysis_npz_dir}/cwat-resolve.npz', **data)
-data = {'rh': np.array(rh)}
+data = {'rh': rh_resolve}
 np.savez(f'{params.reanalysis_npz_dir}/rh-resolve.npz', **data)
-data = {'uwind': np.array(uwind)}
+data = {'uwind': uwind_resolve}
 np.savez(f'{params.reanalysis_npz_dir}/uwind-resolve.npz', **data)
-data = {'vwind': np.array(vwind)}
+data = {'vwind': vwind_resolve}
 np.savez(f'{params.reanalysis_npz_dir}/vwind-resolve.npz', **data)
-data = {'sst': np.array(sst)}
+data = {'sst': sst}
 np.savez(f'{params.reanalysis_npz_dir}/sst-resolve.npz', **data)

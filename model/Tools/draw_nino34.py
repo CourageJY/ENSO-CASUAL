@@ -7,14 +7,14 @@ sys.path.append("")
 from model.params import *
 
 #get min max scaler
-sst_orgin = np.load(f"{params.reanalysis_npz_dir}/sst-resolve-shink.npz")['sst']#(1740,40,55)
+sst_orgin = np.load(f"{params.reanalysis_npz_dir}/sst-resolve.npz")['sst']#(1740,40,55)
 scaler = MinMaxScaler()
-scaler.fit(np.reshape(sst_orgin, (-1, 40*55)))
+scaler.fit(np.reshape(sst_orgin, (-1, 10*50)))
 
 #get mean data of sst
 data_type='reanalysis'
 sst = np.load(f"{params.final_data_dir}/{data_type}/sst-final.npz")['sst']
-sst=np.reshape(scaler.inverse_transform(np.reshape(sst,(-1,40*55))),(-1,40,55))
+sst=np.reshape(scaler.inverse_transform(np.reshape(sst,(-1,10*50))),(-1,10,50))
 len_=len(sst)
 years=30
 
@@ -28,18 +28,18 @@ for i in range(12):
 
 #load the predicted data
 #start=1345
-year=2004
-start=(year-1870)*12-6
-sequence_len=6
-predict_len=18
+year=1982
+start=(year-1870)*12#-params.sequence_length
+sequence_len=params.sequence_length
+predict_len=15
 #file_name='1345-predict-15-res.npz'
-file_name='1602-predict-18-res.npz'
+file_name='1982-predict-15-res.npz'
 sst_predict=[]
 h=np.load(f'./forecast/data_storage/{file_name}')
 #h1=np.load(f'./forecast/data_storage/ago/{file_name}')
 for i in range(predict_len):
     p_=np.load(f'./forecast/data_storage/{file_name}')[str(i)+'m'][0]#(40,55)
-    p_=np.reshape(scaler.inverse_transform(np.reshape(p_,(-1,40*55))),(40,55))
+    p_=np.reshape(scaler.inverse_transform(np.reshape(p_,(-1,10*50))),(10,50))
     sst_predict.append(p_)
 
 #get anormal data of the predicted
@@ -60,9 +60,11 @@ for i in range(predict_len):
 sst_predict_anormal_nino34=[]
 sst_real_anormal_nino34=[]
 for i in range(predict_len):
-    predict_anormal_mean=(sst_predict_anormal[i][18:22,15:39].sum()+sst_predict_anormal[i][17,15:40].sum()/2+sst_predict_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    #predict_anormal_mean=(sst_predict_anormal[i][18:22,15:39].sum()+sst_predict_anormal[i][17,15:40].sum()/2+sst_predict_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    predict_anormal_mean=sst_predict_anormal[i].sum()/(10*50)
     sst_predict_anormal_nino34.append(predict_anormal_mean)
-    real_anormal_mean=(sst_real_anormal[i][18:22,15:39].sum()+sst_real_anormal[i][17,15:40].sum()/2+sst_real_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    #real_anormal_mean=(sst_real_anormal[i][18:22,15:39].sum()+sst_real_anormal[i][17,15:40].sum()/2+sst_real_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    real_anormal_mean=sst_real_anormal[i].sum()/(10*50)
     sst_real_anormal_nino34.append(real_anormal_mean)
 
 #draw the picture
@@ -84,7 +86,7 @@ plt.legend(loc = "best")#图例
 plt.axhline(0, color='black', lw=0.5)
 plt.axhline(0.5, color='black', linewidth=0.5, linestyle='dotted')
 plt.axhline(-0.5, color='black', linewidth=0.5, linestyle='dotted')
-plt.title('Niño 3.4 Index')
+plt.title('1982 Niño 3.4 Index')
 
 plt.show()
 

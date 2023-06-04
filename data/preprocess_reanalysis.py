@@ -23,7 +23,7 @@ def get_mean(data,j,k,h):
 # ---------- Prepare Data ----------
 def parse_npz_data():
     #-----Reanlysis-----
-    # (1740,40,55) or (1740,80,110)
+    # (1740,10,50)
     sst = np.load(f"{params.reanalysis_npz_dir}/sst-resolve.npz")['sst']
     uwind = np.load(f"{params.reanalysis_npz_dir}/uwind-resolve.npz")['uwind']
     vwind = np.load(f"{params.reanalysis_npz_dir}/vwind-resolve.npz")['vwind']
@@ -38,21 +38,21 @@ def parse_npz_data():
     vapor[abs(vapor) < 5e-16] = 0
 
     # (1740,80,110) =>(1740,40,55) 通过取平均值来放缩数据，降低sst分辨率
-    bar = PixelBar(r'Generating', max=sst.shape[0], suffix='%(percent)d%%')#进度条显示
-    sst_=[]
-    shink_size=2
-    for i in range(sst.shape[0]):
-        sst_.append([])
-        for j in range(int(sst.shape[1]/shink_size)):
-            sst_[i].append([])
-            for k in range(int(sst.shape[2]/shink_size)):
-                h=shink_size
-                sst_[i][j].append(sst[i:i+1,j*h:j*h+h,k*h:k*h+h].mean())
-        bar.next()
+    # bar = PixelBar(r'Generating', max=sst.shape[0], suffix='%(percent)d%%')#进度条显示
+    # sst_=[]
+    # shink_size=2
+    # for i in range(sst.shape[0]):
+    #     sst_.append([])
+    #     for j in range(int(sst.shape[1]/shink_size)):
+    #         sst_[i].append([])
+    #         for k in range(int(sst.shape[2]/shink_size)):
+    #             h=shink_size
+    #             sst_[i][j].append(sst[i:i+1,j*h:j*h+h,k*h:k*h+h].mean())
+    #     bar.next()
     
-    bar.finish()
-    sst=np.array(sst_)
-    print(sst.shape)
+    # bar.finish()
+    # sst=np.array(sst_)
+    #print(sst.shape)
 
     #save
     np.savez(f"{params.reanalysis_npz_dir}/sst-resolve-shink.npz",**{'sst':sst})
@@ -60,12 +60,12 @@ def parse_npz_data():
     #对数据进行归一化
     scaler = MinMaxScaler()
 
-    sst=np.reshape(scaler.fit_transform(np.reshape(sst, (-1, 40*55))), (-1, 40, 55))
-    uwind=np.reshape(scaler.fit_transform(np.reshape(uwind, (-1, 40*55))), (-1, 40, 55))
-    vwind=np.reshape(scaler.fit_transform(np.reshape(vwind, (-1, 40*55))), (-1, 40, 55))
-    cloud=np.reshape(scaler.fit_transform(np.reshape(cloud, (-1, 40*55))), (-1, 40, 55))
-    vapor=np.reshape(scaler.fit_transform(np.reshape(vapor, (-1, 40*55))), (-1, 40, 55))
-    rain=np.reshape(scaler.fit_transform(np.reshape(rain, (-1, 40*55))), (-1, 40, 55))
+    sst=np.reshape(scaler.fit_transform(np.reshape(sst, (-1, 10*50))), (-1, 10, 50))
+    uwind=np.reshape(scaler.fit_transform(np.reshape(uwind, (-1, 10*50))), (-1, 10, 50))
+    vwind=np.reshape(scaler.fit_transform(np.reshape(vwind, (-1, 10*50))), (-1, 10, 50))
+    cloud=np.reshape(scaler.fit_transform(np.reshape(cloud, (-1, 10*50))), (-1, 10, 50))
+    vapor=np.reshape(scaler.fit_transform(np.reshape(vapor, (-1, 10*50))), (-1, 10, 50))
+    rain=np.reshape(scaler.fit_transform(np.reshape(rain, (-1, 10*50))), (-1, 10, 50))
     # sst=(sst-sst.min())/(sst.max()-sst.min())
     # uwind=(uwind-uwind.min())/(uwind.max()-uwind.min())
     # vwind=(vwind-vwind.min())/(vwind.max()-vwind.min())

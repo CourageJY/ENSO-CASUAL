@@ -14,14 +14,16 @@ from skimage.metrics import peak_signal_noise_ratio
 import seaborn as sns
 
 #get min max scaler
-sst_orgin = np.load(f"{params.reanalysis_npz_dir}/sst-resolve-shink.npz")['sst']#(1740,40,55)
+sst_orgin = np.load(f"{params.reanalysis_npz_dir}/sst-resolve.npz")['sst']#(1740,40,55)
+#sst_orgin = np.load(f"{params.reanalysis_npz_dir}/pwat-resolve.npz")['pwat']#(1740,40,55)
 scaler = MinMaxScaler()
-scaler.fit(np.reshape(sst_orgin, (-1, 40*55)))
+scaler.fit(np.reshape(sst_orgin, (-1, 10*50)))
 
 #get mean data of sst
 data_type='reanalysis'
-sst_unfit = np.load(f"{params.final_data_dir}/{data_type}/sst-final.npz")['sst']
-sst=np.reshape(scaler.inverse_transform(np.reshape(sst_unfit,(-1,40*55))),(-1,40,55))
+var='sst'
+sst_unfit = np.load(f"{params.final_data_dir}/{data_type}/{var}-final.npz")[var]
+sst=np.reshape(scaler.inverse_transform(np.reshape(sst_unfit,(-1,10*50))),(-1,10,50))
 len_=len(sst)
 years=30
 
@@ -34,12 +36,12 @@ for i in range(12):
     sst_mean_month[i]=sst_mean_month[i]/years
 
 #load the encodered data
-sst_encoder=np.load(f'./model/AutoEncoder/model_storage/reanalysis/sst-encoder.npz')['sst']
+sst_encoder=np.load(f'./model/AutoEncoder/model_storage/{data_type}/{var}-encoder.npz')[var]
 
 #load the decoder model
 data_type='reanalysis'
 model=Autoencoder(params.latent_dim)
-model.load_weights(f'{params.encoder_save_dir}/{data_type}/sst-model').expect_partial()
+model.load_weights(f'{params.encoder_save_dir}/{data_type}/{var}-model').expect_partial()
 
 year=2004
 start=(year-1870)*12
@@ -47,9 +49,9 @@ predict_len=36
 
 #get the decodered data(predict)
 t=tf.convert_to_tensor(sst_encoder, tf.float32)
-t=tf.reshape(t,[-1,64])
-sst_predict=model.decoder(t).numpy().reshape(-1,40,55)
-sst_predict_fit=np.reshape(scaler.inverse_transform(np.reshape(sst_predict,(-1,40*55))),(-1,40,55))
+t=tf.reshape(t,[-1,params.latent_dim])
+sst_predict=model.decoder(t).numpy().reshape(-1,10,50)
+sst_predict_fit=np.reshape(scaler.inverse_transform(np.reshape(sst_predict,(-1,10*50))),(-1,10,50))
 
 #get anormal data of the predicted
 sst_predict_anormal=[]#(predict_len,40,55)
@@ -69,9 +71,11 @@ for i in range(predict_len):
 sst_predict_anormal_nino34=[]
 sst_real_anormal_nino34=[]
 for i in range(predict_len):
-    predict_anormal_mean=(sst_predict_anormal[i][18:22,15:39].sum()+sst_predict_anormal[i][17,15:40].sum()/2+sst_predict_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    #predict_anormal_mean=(sst_predict_anormal[i][18:22,15:39].sum()+sst_predict_anormal[i][17,15:40].sum()/2+sst_predict_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    predict_anormal_mean=sst_predict_anormal[i].sum()/(10*50)
     sst_predict_anormal_nino34.append(predict_anormal_mean)
-    real_anormal_mean=(sst_real_anormal[i][18:22,15:39].sum()+sst_real_anormal[i][17,15:40].sum()/2+sst_real_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    #real_anormal_mean=(sst_real_anormal[i][18:22,15:39].sum()+sst_real_anormal[i][17,15:40].sum()/2+sst_real_anormal[i][18:22,40].sum()/2)/(125+31/2)
+    real_anormal_mean=sst_real_anormal[i].sum()/(10*50)
     sst_real_anormal_nino34.append(real_anormal_mean)
 
 #draw nino3.4 index

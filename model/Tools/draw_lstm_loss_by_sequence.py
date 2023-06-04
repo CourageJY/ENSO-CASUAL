@@ -2,20 +2,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-validation = [0.8892,0.761,0.7243,0.6954,0.6732,0.6321,0.6420,0.6532,0.6544,0.6631,0.6638,0.6636]
-Test = [0.8966,0.7556,0.7316,0.6974,0.6832,0.6341,0.6432,0.6542,0.6574,0.6671,0.6698,0.6696]
+valid = [0.8892,0.761,0.7243,0.6954,0.6732,0.6621,0.6650,0.6712,0.6754,0.6751,0.6778,0.6796]
+train = [0.8766,0.7556,0.7116,0.6874,0.6632,0.6541,0.6572,0.6642,0.6674,0.6701,0.6723,0.6736]
 
 x = np.arange(1,13) #group number
-total_width, n = 0.4, 2
+total_width, n = 0.8, 2
 width = total_width / n
-x = x - (total_width-width)
-plt.bar(x, validation, color = "r",width=width,label='validation')
-plt.bar(x + width, Test, color = "y",width=width,label='test')
+
+fig = plt.figure(figsize=(10, 6))
+
+plt.bar(x+0.2, valid, color = "g",width=width,label='valid loss')
+plt.bar(x-0.2 , train, color = "y",width=width,label='train loss')
 
 plt.xlabel("sequence length")
-plt.ylabel("mean_absolute_error")
+plt.ylabel("mean_absolute_error(normalized data)")
 plt.xticks(range(1,13),range(1,13))
-plt.yticks(np.arange(0,1, 0.1))
+plt.yticks(np.arange(0,1, 0.05))
 plt.legend(loc = "best")
+plt.ylim(0.4)
+plt.grid('off')
 
 plt.show()

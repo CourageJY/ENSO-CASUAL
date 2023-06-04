@@ -62,6 +62,12 @@ cover/
 **/data_storage
 **/data_storage1
 **/history
+**/history-all-area
+**/history-no-min-max
+**/history-32
+**/data_storage_no_min_max
+**/data_storage-all-area
+**/final-all-area
 
 # Translations
 *.mo

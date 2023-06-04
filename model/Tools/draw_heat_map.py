@@ -12,7 +12,7 @@ from model.params import *
 
 import cmaps
 
-def plot_heatmap(data, llcrnrlon=150, urcrnrlon=230, llcrnrlat=-40, urcrnrlat=40, xgrid=0, ygrid=0,xbar_d=0,ybar_d=0
+def plot_heatmap(data, llcrnrlon=190, urcrnrlon=240, llcrnrlat=-5, urcrnrlat=5, xgrid=0, ygrid=0,xbar_d=0,ybar_d=0
                  ,show=False,save=False,title=None,file_name=None,cmap=None,level=[]):
     plt.figure()
     m = Basemap(projection="cyl", llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,

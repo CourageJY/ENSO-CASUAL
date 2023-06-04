@@ -28,7 +28,7 @@ from model.params import *
 data_e=[]
 data_type='reanalysis'
 for var in params.variables:
-    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
+    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-min-max-encoder.npz')[var])
 
 #--------get the num of no_zero in data----------
 data_names,data_nums=[],[]
@@ -41,8 +41,9 @@ for i in range(len(data_e)):
     data_names.append(names)
     data_nums.append(nums)
 
-#------pc casual discovey for single varibles latent features----------
+#------ganger casual discovey for single varibles latent features----------
 for k in range(len(data_e)):
+    #if k<3:continue
     for i in range(len(data_e)): # not include 0, 0 is sst
         print("---------------------------")
         print("-------Step{}--------------".format(i))
@@ -75,8 +76,8 @@ for k in range(len(data_e)):
             prior_knowledge = None 
 
             target_var = var_names[0]
-            max_lag = 5
-            pvalue_thres = 0.001
+            max_lag = params.external_casual_times
+            pvalue_thres = 0.005
             #print(f'Target Variable: {target_var}, using max_lag {max_lag}, pvalue_thres {pvalue_thres}')
 
             #CI_test = PartialCorrelation() # use KCI() if the causal relationship is expected to be non-linear
@@ -84,7 +85,7 @@ for k in range(len(data_e)):
             granger_single = GrangerSingle(
                 data=data_obj,
                 prior_knowledge=prior_knowledge,
-                max_iter=2000, # number of optimization iterations for model fitting (default value is 1000)
+                max_iter=20000, # number of optimization iterations for model fitting (default value is 1000)
                 use_multiprocessing=False
                 )
             tic = time.time()

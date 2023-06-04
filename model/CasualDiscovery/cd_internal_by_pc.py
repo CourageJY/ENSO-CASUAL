@@ -17,7 +17,7 @@ import time
 data_e=[]
 data_type='reanalysis'
 for var in params.variables:
-    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
+    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-min-max-encoder.npz')[var])
 
 #--------get the num of no_zero in data----------
 data_names,data_nums=[],[]

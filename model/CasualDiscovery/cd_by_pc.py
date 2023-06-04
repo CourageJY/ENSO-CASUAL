@@ -27,7 +27,7 @@ from model.params import *
 data_e=[]
 data_type='reanalysis'
 for var in params.variables:
-    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-encoder.npz')[var])
+    data_e.append(np.load(f'{params.encoder_save_dir}/{data_type}/{var}-min-max-encoder.npz')[var])
 
 # sst_e=np.load(f'{params.encoder_save_dir}/sst-encoder.npz')['sst']
 # uwind_e=np.load(f'{params.encoder_save_dir}/uwind-encoder.npz')['uwind']
@@ -88,7 +88,7 @@ for i in range(1,len(data_e)): # not include 0, 0 is sst
         prior_knowledge = None 
 
         target_var = var_names[0]
-        max_lag = 5
+        max_lag = 2
         pvalue_thres = 0.1
         #print(f'Target Variable: {target_var}, using max_lag {max_lag}, pvalue_thres {pvalue_thres}')
 
